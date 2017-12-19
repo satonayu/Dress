@@ -1,5 +1,5 @@
 {############################################################################ 
-	Dress up the Kuin --- module Color  ver 2017.11.30
+	Dress up the Kuin --- module Color
 
 	Created by @satonayu
 		http://hime.be/
@@ -7,6 +7,8 @@
 	
     License: くいなちゃんライセンス( http://kuina.ch/others/license )
 ############################################################################}
++const VER: []char :: "2017.12.20"
+
 
 ; ARGBの値からsRGB空間の値を生成
 +func srgb(a: int, r: int, g: int, b: int): int
