@@ -1,0 +1,72 @@
+; module Color Test (C)satochi@http://hime.be/
+
+{
+	モジュールを以下のように配置してテスト実施
+	./dress/color.kn
+}
+
+func main()
+	do @testClear()
+	
+	var color: int
+	
+	do color :: \dress\color@argb(0xAA, 0xBB, 0xCC, 0xDD)
+	do @assertTrue(color = 0xAABBCCDD, "color@argb _1")
+	do color :: \dress\color@argb(-1, -1, -1, -1)
+	do @assertTrue(color = 0x00000000, "color@argb _2")
+	do color :: \dress\color@argb(256, 256, 256, 256)
+	do @assertTrue(color = 0xFFFFFFFF, "color@argb _3")
+	
+	do color :: \dress\color@linear(0.5, 0.5, 0.5, 0.5)
+	do @assertTrue(color = 0x7F7F7F7F, "color@linear _1")
+	do color :: \dress\color@linear(-0.5, -0.5, -0.5, -0.5)
+	do @assertTrue(color = 0x00000000, "color@linear _2")
+	do color :: \dress\color@linear(1.5, 1.5, 1.5, 1.5)
+	do @assertTrue(color = 0xFFFFFFFF, "color@linear _3")
+	
+	do color :: 0xAABBCCDD
+	do @assertTrue(\dress\color@a(color) = 0xAA, "color@a")
+	do @assertTrue(\dress\color@r(color) = 0xBB, "color@r")
+	do @assertTrue(\dress\color@g(color) = 0xCC, "color@g")
+	do @assertTrue(\dress\color@b(color) = 0xDD, "color@b")
+	
+	do @assertTrue(\dress\color@setA(color, 0xEE) = 0xEEBBCCDD, "color@setA@")
+	do @assertTrue(\dress\color@setR(color, 0xEE) = 0xAAEECCDD, "color@setR@")
+	do @assertTrue(\dress\color@setG(color, 0xEE) = 0xAABBEEDD, "color@setG@")
+	do @assertTrue(\dress\color@setB(color, 0xEE) = 0xAABBCCEE, "color@setB@")
+	
+	do @assertTrue(lib@same(\dress\color@stol(0xCC), 0.8), "color@stol _1")
+	do @assertTrue(lib@same(\dress\color@stol(-1), 0.0), "color@stol _2")
+	do @assertTrue(lib@same(\dress\color@stol(256), 1.0), "color@stol _3")
+	
+	do @assertTrue(\dress\color@ltos(0.5) = 0x7F, "color@ltos _1")
+	do @assertTrue(\dress\color@ltos(-0.5) = 0x00, "color@ltos _2")
+	do @assertTrue(\dress\color@ltos(1.5) = 0xFF, "color@ltos _3")
+	
+	do @totalResult("module Color")
+end func
+
+
+var testCnt: int
+var errCnt: int
+
+func testClear()
+	do @testCnt :: 0
+	do @errCnt :: 0
+end func
+
+
+func assertTrue(result: bool, message: []char)
+	do @testCnt :+ 1
+	if(!result)
+		do @errCnt :+ 1
+		do cui@print("[Assert Failed] \{message}\n")
+	end if
+end func
+
+
+func totalResult(target: []char)
+	if(@errCnt = 0)
+		do cui@print("Succeeded!(\{@testCnt} tests)(class: \{target})\n\n")
+	end if
+end func

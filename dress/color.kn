@@ -1,0 +1,230 @@
+{############################################################################
+	Dress up the Kuin --- module Color
+      Created by satonayu(http://hime.be/, https://twitter.com/satonayu)
+        License: くいなちゃんライセンス( http://kuina.ch/others/license )
+############################################################################}
+; ARGBの値からsRGB空間の値を生成
++func argb(a: int, r: int, g: int, b: int): int
+	ret(a.clamp(0, 255) $ bit32).shl(3 * 8)
+	|.or((r.clamp(0, 255) $ bit32).shl(2 * 8))
+	|.or((g.clamp(0, 255) $ bit32).shl(1 * 8))
+	|.or(b.clamp(0, 255) $ bit32) $ int
+end func
+
+
+; リニア空間の色情報からsRGB空間のの値を生成
++func linear(a: float, r: float, g: float, b: float): int
+	ret @argb(@ltos(a), @ltos(r), @ltos(g), @ltos(b))
+end func
+
+
+; Extract alpha value
++func a(color: int): int
+	ret(color $ bit32).shr(3 * 8).and(0xFFb32) $ int
+end func
+
+
+; Extract red value
++func r(color: int): int
+	ret(color $ bit32).shr(2 * 8).and(0xFFb32) $ int
+end func
+
+
+; Extract green value
++func g(color: int): int
+	ret(color $ bit32).shr(1 * 8).and(0xFFb32) $ int
+end func
+
+
+; Extract blue value
++func b(color: int): int
+	ret(color $ bit32).and(0xFFb32) $ int
+end func
+
+
+; set alpha value
++func setA(color: int, value: int): int
+	ret(color $ bit32).and(0x00FFFFFFb32)
+	|.or((value.clamp(0, 255) $ bit32).shl(3 * 8)) $ int
+end func
+
+
+; set red value
++func setR(color: int, value: int): int
+	ret(color $ bit32).and(0xFF00FFFFb32)
+	|.or((value.clamp(0, 255) $ bit32).shl(2 * 8)) $ int
+end func
+
+
+; set green value
++func setG(color: int, value: int): int
+	ret(color $ bit32).and(0xFFFF00FFb32)
+	|.or((value.clamp(0, 255) $ bit32).shl(1 * 8)) $ int
+end func
+
+
+; set blue value
++func setB(color: int, value: int): int
+	ret(color $ bit32).and(0xFFFFFF00b32)
+	|.or((value.clamp(0, 255) $ bit32)) $ int
+end func
+
+
+; StandardRGB to LinearRGB
++func stol(value: int): float
+	ret(value.clamp(0, 255) $ float) / 255.0
+end func
+
+
+; LinearRGB to StandardRGB
++func ltos(value: float): int
+	ret(value.clamp(0.0, 1.0) * 255.0) $ int
+end func
+
+
+
+; ######## Color name constant ########
++const transparent: int :: 0x00000000
++const semitransparent: int :: 0x7F000000
+
+; Color name 140 pattern
++const white: int :: 0xFFFFFFFF
++const whitesmoke: int :: 0xFFF5F5F5
++const ghostwhite: int :: 0xFFF8F8FF
++const aliceblue: int :: 0xFFF0F8FF
++const lavendar: int :: 0xFFE6E6FA
++const azure: int :: 0xFFF0FFFF
++const lightcyan: int :: 0xFFE0FFFF
++const mintcream: int :: 0xFFF5FFFA
++const honeydew: int :: 0xFFF0FFF0
++const ivory: int :: 0xFFFFFFF0
++const beige: int :: 0xFFF5F5DC
++const lightyellow: int :: 0xFFFFFFE0
++const lightgoldenrodyellow: int :: 0xFFFAFAD2
++const lemonchiffon: int :: 0xFFFFFACD
++const floralwhite: int :: 0xFFFFFAF0
++const oldlace: int :: 0xFFFDF5E6
++const cornsilk: int :: 0xFFFFF8DC
++const papayawhite: int :: 0xFFFFEFD5
++const blanchedalmond: int :: 0xFFFFEBCD
++const bisque: int :: 0xFFFFE4C4
++const snow: int :: 0xFFFFFAFA
++const linen: int :: 0xFFFAF0E6
++const antiquewhite: int :: 0xFFFAEBD7
++const seashell: int :: 0xFFFFF5EE
++const lavenderblush: int :: 0xFFFFF0F5
++const mistyrose: int :: 0xFFFFE4E1
++const gainsboro: int :: 0xFFDCDCDC
++const lightgray: int :: 0xFFD3D3D3
++const lightsteelblue: int :: 0xFFB0C4DE
++const lightblue: int :: 0xFFADD8E6
++const lightskyblue: int :: 0xFF87CEFA
++const powderblue: int :: 0xFFB0E0E6
++const paleturquoise: int :: 0xFFAFEEEE
++const skyblue: int :: 0xFF87CEEB
++const mediumaquamarine: int :: 0xFF66CDAA
++const aquamarine: int :: 0xFF7FFFD4
++const palegreen: int :: 0xFF98FB98
++const lightgreen: int :: 0xFF90EE90
++const khaki: int :: 0xFFF0E68C
++const palegoldenrod: int :: 0xFFEEE8AA
++const moccasin: int :: 0xFFFFE4B5
++const navajowhite: int :: 0xFFFFDEAD
++const peachpuff: int :: 0xFFFFDAB9
++const wheat: int :: 0xFFF5DEB3
++const pink: int :: 0xFFFFC0CB
++const lightpink: int :: 0xFFFFB6C1
++const thistle: int :: 0xFFD8BFD8
++const plum: int :: 0xFFDDA0DD
++const silver: int :: 0xFFC0C0C0
++const darkgray: int :: 0xFFA9A9A9
++const lightslategray: int :: 0xFF778899
++const slategray: int :: 0xFF708090
++const slateblue: int :: 0xFF6A5ACD
++const steelblue: int :: 0xFF4682B4
++const mediumslateblue: int :: 0xFF7B68EE
++const royalblue: int :: 0xFF4169E1
++const blue: int :: 0xFF0000FF
++const dodgerblue: int :: 0xFF1E90FF
++const cornflowerblue: int :: 0xFF6495ED
++const deepskyblue: int :: 0xFF00BFFF
++const cyan: int :: 0xFF00FFFF
++const aqua: int :: 0xFF00FFFF
++const turquoise: int :: 0xFF40E0D0
++const mediumturquoise: int :: 0xFF48D1CC
++const darkturquoise: int :: 0xFF00CED1
++const lightseagreen: int :: 0xFF20B2AA
++const mediumspringgreen: int :: 0xFF00FA9A
++const springgreen: int :: 0xFF00FF7F
++const lime: int :: 0xFF00FF00
++const limegreen: int :: 0xFF32CD32
++const yellowgreen: int :: 0xFF9ACD32
++const lawngreen: int :: 0xFF7CFC00
++const chartreuse: int :: 0xFF7FFF00
++const greenyellow: int :: 0xFFADFF2F
++const yellow: int :: 0xFFFFFF00
++const gold: int :: 0xFFFFD700
++const orange: int :: 0xFFFFA500
++const darkorange: int :: 0xFFFF8C00
++const goldenrod: int :: 0xFFDAA520
++const burlywood: int :: 0xFFDEB887
++const tan: int :: 0xFFD2B48C
++const sandybrown: int :: 0xFFF4A460
++const darksalmon: int :: 0xFFE9967A
++const lightcoral: int :: 0xFFF08080
++const salmon: int :: 0xFFFA8072
++const lightsalmon: int :: 0xFFFFA07A
++const coral: int :: 0xFFFF7F50
++const tomato: int :: 0xFFFF6347
++const orangered: int :: 0xFFFF4500
++const red: int :: 0xFFFF0000
++const deeppink: int :: 0xFFFF1493
++const hotpink: int :: 0xFFFF69B4
++const palevioletred: int :: 0xFFDB7093
++const violet: int :: 0xFFEE82EE
++const orchid: int :: 0xFFDA70D6
++const magenta: int :: 0xFFFF00FF
++const fuchsia: int :: 0xFFFF00FF
++const mediumorchid: int :: 0xFFBA55D3
++const darkorchid: int :: 0xFF9932CC
++const darkviolet: int :: 0xFF9400D3
++const blueviolet: int :: 0xFF8A2BE2
++const mediumpurple: int :: 0xFF9370DB
++const gray: int :: 0xFF808080
++const mediumblue: int :: 0xFF0000CD
++const darkcyan: int :: 0xFF008B8B
++const cadetblue: int :: 0xFF5F9EA0
++const darkseagreen: int :: 0xFF8FBC8F
++const mediumseagreen: int :: 0xFF3CB371
++const teal: int :: 0xFF008080
++const forestgreen: int :: 0xFF228B22
++const seagreen: int :: 0xFF2E8B57
++const darkkhaki: int :: 0xFFBDB76B
++const peru: int :: 0xFFCD853F
++const crimson: int :: 0xFFDC143C
++const indianred: int :: 0xFFCD5C5C
++const rosybrown: int :: 0xFFBC8F8F
++const mediumvioletred: int :: 0xFFC71585
++const dimgray: int :: 0xFF696969
++const black: int :: 0xFF000000
++const midnightblue: int :: 0xFF191970
++const darkslateblue: int :: 0xFF483D8B
++const darkblue: int :: 0xFF00008B
++const navy: int :: 0xFF000080
++const darkslategray: int :: 0xFF2F4F4F
++const green: int :: 0xFF008000
++const darkgreen: int :: 0xFF006400
++const darkolivegreen: int :: 0xFF556B2F
++const olivedrab: int :: 0xFF6B8E23
++const olive: int :: 0xFF808000
++const darkgoldenrod: int :: 0xFFB8860B
++const chocolate: int :: 0xFFD2691E
++const sienna: int :: 0xFFA0522D
++const saddlebrown: int :: 0xFF8B4513
++const firebrick: int :: 0xFFB22222
++const brown: int :: 0xFFA52A2A
++const maroon: int :: 0xFF800000
++const darkred: int :: 0xFF8B0000
++const darkmagenta: int :: 0xFF8B008B
++const purple: int :: 0xFF800080
++const indigo: int :: 0xFF4B0082
