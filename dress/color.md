@@ -4,18 +4,18 @@ colorモジュールに用意されているものは表１の通りです。
 
 | 名前 | 説明 |
 ----|---- 
-| [color@argb](#color@argb) | 各チャンネル情報からsRGB空間の値を生成する関数 |
-| [color@linear](#color@lenear) | リニア空間の各チャンネル情報からsRGB空間の値を生成する関数 |
-| [color@a](#color@a) | sRGB空間の値からアルファチャンネル値を抽出する関数 |
-| [color@r](#color@r) | sRGB空間の値から赤チャンネル値を抽出する関数 |
-| [color@g](#color@g) | sRGB空間の値から緑チャンネル値を抽出する関数 |
-| [color@b](#color@b) | sRGB空間の値から青チャンネル値を抽出する関数 |
-| [color@setA](#color@setA) | sRGB空間のアルファチャンネル値を再設定する関数 |
-| [color@setR](#color@setR) | sRGB空間の赤チャンネル値を再設定する関数 |
-| [color@setG](#color@setG) | sRGB空間の緑チャンネル値を再設定する関数 |
-| [color@setB](#color@setB) | sRGB空間の青チャンネル値を再設定する関数 |
-| [color@stol](#color@stol) | sRGB空間のチャンネル値をリニア空間のチャンネル値に変換する関数 |
-| [color@ltos](#color@ltos) | リニア空間のチャンネル値をsRGB空間のチャンネル値に変換する関数 |
+| color@argb | 各チャンネル情報からsRGB空間の値を生成する関数 |
+| color@linear | リニア空間の各チャンネル情報からsRGB空間の値を生成する関数 |
+| color@a | sRGB空間の値からアルファチャンネル値を抽出する関数 |
+| color@r | sRGB空間の値から赤チャンネル値を抽出する関数 |
+| color@g | sRGB空間の値から緑チャンネル値を抽出する関数 |
+| color@b | sRGB空間の値から青チャンネル値を抽出する関数 |
+| color@setA | sRGB空間のアルファチャンネル値を再設定する関数 |
+| color@setR | sRGB空間の赤チャンネル値を再設定する関数 |
+| color@setG | sRGB空間の緑チャンネル値を再設定する関数 |
+| color@setB | sRGB空間の青チャンネル値を再設定する関数 |
+| color@stol | sRGB空間のチャンネル値をリニア空間のチャンネル値に変換する関数 |
+| color@ltos | リニア空間のチャンネル値をsRGB空間のチャンネル値に変換する関数 |
 
 ---
 
