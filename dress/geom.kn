@@ -1,0 +1,308 @@
+{############################################################################
+    Dress up the Kuin --- module Geometry
+      Created by satonayu(http://hime.be/, https://twitter.com/satonayu)
+        License: くいなちゃんライセンス( http://kuina.ch/others/license )
+############################################################################}
+; ２点間の距離
++func distance(p1: @Point, p2: @Point): float
+	ret lib@dist(p2.x(), p2.y(), p1.x(), p1.y())
+end func
+
+
+; ２つの点の結合
++func combine(p1: @Point, p2: @Point): @Point
+	ret(#@Point).set(p1.x() + p2.x(), p1.y() + p2.y())
+end func
+
+
+; ２点間の線形補間
++func lerp(p1: @Point, p2: @Point, rate: float): @Point
+	ret(#@Point).set(lib@lerp(p1.x(), p2.x(), rate),
+	|lib@lerp(p1.y(), p2.y(), rate))
+end func
+
+
++func makePoint(x: float, y: float): @Point
+	ret(#@Point).set(x, y)
+end func
+
+
++func makeRectangle(x: float, y: float, width: float, height: float): @Rectangle
+	ret(#@Rectangle).set(x, y, width, height)
+end func
+
+
++class Point()
+	var _x: float
+	var _y: float
+	
+	
+	; +property
+	+func x(): float
+		ret me._x
+	end func
+	+func setX(value: float): @Point
+		do me._x :: value
+		ret me
+	end func
+	
+	
+	; +property
+	+func y(): float
+		ret me._y
+	end func
+	+func setY(value: float): @Point
+		do me._y :: value
+		ret me
+	end func
+	
+	
+	; +property [read-only]
+	; from (0.0, 0.0)
+	+func length(): float
+		ret lib@sqrt(me._x ^ 2.0 + me._y ^ 2.0)
+	end func
+	
+	
+	+func set(x: float, y: float): @Point
+		ret me.setX(x).setY(y)
+	end func
+	
+	
+	+func offset(x: float, y: float): @Point
+		ret me.setX(me._x + x).setY(me._y + y)
+	end func
+	
+	
+	+func offsetPoint(point: @Point): @Point
+		ret me.setX(me._x + point.x()).setY(me._y + point.y())
+	end func
+	
+	
+	+func equals(point: @Point): bool
+		ret lib@same(me._x, point.x()) & lib@same(me._y, point.y())
+	end func
+	
+	
+	+func clear(): @Point
+		ret me.set(0.0, 0.0)
+	end func
+	
+	
+	+func isEmpty(): bool
+		ret lib@same(me._x, 0.0) & lib@same(me._y, 0.0)
+	end func
+	
+	
+	; XY座標の大きさで比較(X優先)
+	+*func cmp(t: @Point): int
+		var subX: float :: me._x - t.x()
+		if(lib@same(subX, 0.0))
+			var subY: float :: me._y - t.y()
+			if(lib@same(subY, 0.0))
+				ret 0
+			end if
+			ret(subY > 0.0) ?(1, -1)
+		end if
+		ret(subX > 0.0) ?(1, -1)
+	end func
+	
+	
+	+*func toStr(): []char
+		ret "(x = \{me._x}, y = \{me._y})"
+	end func
+end class
+
+
+
++class Rectangle()
+	var _x: float
+	var _y: float
+	var _width: float
+	var _height: float
+	
+	
+	; +property
+	+func x(): float
+		ret me._x
+	end func
+	+func setX(value: float): @Rectangle
+		do me._x :: value
+		ret me
+	end func
+	
+	
+	; +property
+	+func y(): float
+		ret me._y
+	end func
+	+func setY(value: float): @Rectangle
+		do me._y :: value
+		ret me
+	end func
+	
+	
+	; +property
+	+func width(): float
+		ret me._width
+	end func
+	+func setWidth(value: float): @Rectangle
+		do me._width :: lib@maxFloat(value, 0.0)
+		ret me
+	end func
+	
+	
+	; +property
+	+func height(): float
+		ret me._height
+	end func
+	+func setHeight(value: float): @Rectangle
+		do me._height :: lib@maxFloat(value, 0.0)
+		ret me
+	end func
+	
+	
+	; +property
+	+func left(): float
+		ret me._x
+	end func
+	+func setLeft(value: float): @Rectangle
+		ret me.setWidth(me.right() - value).setX(value)
+	end func
+	
+	
+	; +property
+	+func right(): float
+		ret me._x + me._width
+	end func
+	+func setRight(value: float): @Rectangle
+		ret me.setWidth(value - me._x)
+	end func
+	
+	
+	; +property
+	+func top(): float
+		ret me._y
+	end func
+	+func setTop(value: float): @Rectangle
+		ret me.setHeight(me.bottom() - value).setY(value)
+	end func
+	
+	
+	; +property
+	+func bottom(): float
+		ret me._y + me._height
+	end func
+	+func setBottom(value: float): @Rectangle
+		ret me.setHeight(value - me._y)
+	end func
+	
+	
+	; +property
+	+func position(): @Point
+		ret(#@Point).set(me._x, me._y)
+	end func
+	+func setPosition(value: @Point): @Rectangle
+		ret me.setX(value.x()).setY(value.y())
+	end func
+	
+	
+	; +property
+	+func size(): @Point
+		ret(#@Point).set(me._width, me._height)
+	end func
+	+func setSize(value: @Point): @Rectangle
+		ret me.setWidth(value.x()).setHeight(value.y())
+	end func
+	
+	
+	+func set(x: float, y: float, width: float, height: float): @Rectangle
+		ret me.setX(x).setY(y).setWidth(width).setHeight(height)
+	end func
+	
+	
+	+func offset(x: float, y: float): @Rectangle
+		ret me.setX(me._x + x).setY(me._y + y)
+	end func
+	
+	
+	+func offsetPoint(point: @Point): @Rectangle
+		ret me.offset(point.x(), point.y())
+	end func
+	
+	
+	; Rectangleの中心座標をそのままに、外周を指定されただけ広げます。
+	+func inflate(x: float, y: float)
+		do me.setX(me._x - x).setWidth(me._width + x * 2.0)
+		do me.setY(me._y - y).setHeight(me._height + y * 2.0)
+	end func
+	
+	
+	+func inflatePoint(point: @Point)
+		do me.inflate(point.x(), point.y())
+	end func
+	
+	
+	+func equals(rect: @Rectangle): bool
+		ret lib@same(me._x, rect.x()) & lib@same(me._y, rect.y()) &
+		|lib@same(me._width, rect.width()) & lib@same(me._height, rect.height())
+	end func
+	
+	
+	+func clear(): @Rectangle
+		ret me.set(0.0, 0.0, 0.0, 0.0)
+	end func
+	
+	
+	; 幅と高さが0.0の時にtrue。位置は考慮しない。
+	+func isEmpty(): bool
+		ret lib@same(me._width, 0.0) & lib@same(me._height, 0.0)
+	end func
+	
+	
+	+func isContainsXY(x: float, y: float): bool
+		ret(x > me._x) & (x < me.right()) & (y > me._y) & (y < me.bottom())
+	end func
+	
+	
+	+func isContainsPoint(point: @Point): bool
+		ret me.isContainsXY(point.x(), point.y())
+	end func
+	
+	
+	; rectを完全に内包している場合のみtrue
+	+func isContainsRect(rect: @Rectangle): bool
+		ret(rect.x() > me._x) & (rect.right() < me.right())
+		|&(rect.y() > me._y) & (rect.bottom() < me.bottom())
+	end func
+	
+	
+	; rectが一部でも交差していたらtrue
+	+func isIntersectsRect(rect: @Rectangle): bool
+		var left: float :: lib@maxFloat(me.left(), rect.left())
+		var top: float :: lib@maxFloat(me.top(), rect.top())
+		var right: float :: lib@minFloat(me.right(), rect.right())
+		var bottom: float :: lib@minFloat(me.bottom(), rect.bottom())
+		
+		ret((right - left) > 0.0 & (bottom - top) > 0.0)
+	end func
+	
+	
+	; XY座標の大きさで比較(X優先)
+	+*func cmp(t: @Point): int
+		var subX: float :: me._x - t.x()
+		if(lib@same(subX, 0.0))
+			var subY: float :: me._y - t.y()
+			if(lib@same(subY, 0.0))
+				ret 0
+			end if
+			ret(subY > 0.0) ?(1, -1)
+		end if
+		ret(subX > 0.0) ?(1, -1)
+	end func
+	
+	
+	+*func toStr(): []char
+		ret "(x = \{me._x}, y = \{me._y}, width = \{me._width}, height = \{me._height})"
+	end func
+end class

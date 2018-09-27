@@ -1,0 +1,227 @@
+; module Geometry Test (C)satochi@http://hime.be/
+
+{
+	モジュールを以下のように配置してテスト実施
+	./dress/geom.kn
+}
+
+func main()
+	block Geometry
+		do @testClear()
+		
+		var point1: \dress\geom@Point :: \dress\geom@makePoint(0.0, 0.0)
+		var point2: \dress\geom@Point :: \dress\geom@makePoint(3.0, 5.0)
+		
+		var distance1: float :: \dress\geom@distance(point1, point2)
+		var distance2: float :: lib@dist(3.0, 5.0, 0.0, 0.0)
+		do @assertTrue(lib@same(distance1, distance2), "geom@distance")
+		
+		do point1.set(2.0, 4.0)
+		var point3: \dress\geom@Point :: \dress\geom@combine(point1, point2)
+		var point4: \dress\geom@Point :: \dress\geom@makePoint(5.0, 9.0)
+		do @assertTrue(point3.equals(point4), "geom@combine")
+		
+		var x: float :: lib@lerp(2.0, 5.0, 0.5)
+		var y: float :: lib@lerp(4.0, 9.0, 0.5)
+		do point4.set(x, y)
+		do point2 :: \dress\geom@lerp(point1, point3, 0.5)
+		do @assertTrue(point2.equals(point4), "geom@lerp")
+		
+		do @totalResult("module Geometry")
+	end block
+	
+	
+	block Point
+		do @testClear()
+		
+		var point1: \dress\geom@Point :: \dress\geom@makePoint(0.0, 0.0)
+		var point2: \dress\geom@Point :: \dress\geom@makePoint(3.0, 5.0)
+		
+		do @assertTrue(lib@same(point1.x(), 0.0), "geom@Point.x")
+		do @assertTrue(lib@same(point1.y(), 0.0), "geom@Point.y")
+		
+		do point1.clear().setX(1.0).setY(2.0)
+		do @assertTrue(lib@same(point1.x(), 1.0), "geom@Point.setX")
+		do @assertTrue(lib@same(point1.y(), 2.0), "geom@Point.setY")
+		
+		do @assertTrue(lib@same(point2.length(), lib@sqrt(34.0)), "geom@Point.length")
+		
+		do point1.offset(1.0, 2.0)
+		do @assertTrue(lib@same(point1.x(), 2.0), "geom@Point.offset _1")
+		do @assertTrue(lib@same(point1.y(), 4.0), "geom@Point.offset _2")
+		
+		do point1.offsetPoint(point2)
+		do @assertTrue(lib@same(point1.x(), 5.0), "geom@Point.offsetPoint _1")
+		do @assertTrue(lib@same(point1.y(), 9.0), "geom@Point.offsetPoint _2")
+		
+		do @assertTrue(!point1.equals(point2), "geom@Point.equals _1")
+		do point1.set(point2.x(), point2.y())
+		do @assertTrue(point1.equals(point2), "geom@Point.equals _2")
+		
+		do point1.clear()
+		do @assertTrue(lib@same(point1.x(), 0.0), "geom@Point.clear _1")
+		do @assertTrue(lib@same(point1.y(), 0.0), "geom@Point.clear _2")
+		
+		do @assertTrue(point1.isEmpty(), "geom@Point.isEmpty _1")
+		do @assertTrue(!point2.isEmpty(), "geom@Point.isEmpty _2")
+		
+		do point1.clear()
+		do point2.set(3.0, 5.0)
+		var pointAry: []\dress\geom@Point :: [point2, point1]
+		do pointAry.sort()
+		do @assertTrue(pointAry[0] =& point1, "geom@Point.cmp _1")
+		do point2.setX(-1.0)
+		do pointAry.sort()
+		do @assertTrue(pointAry[0] =& point2, "geom@Point.cmp _2")
+		do point2.setX(0.0)
+		do pointAry.sort()
+		do @assertTrue(pointAry[0] =& point1, "geom@Point.cmp _3")
+		do point2.setY(-1.0)
+		do pointAry.sort()
+		do @assertTrue(pointAry[0] =& point2, "geom@Point.cmp _4")
+		do point2.setY(0.0)
+		do pointAry.sort()
+		do @assertTrue(pointAry[0] =& point2, "geom@Point.cmp _5")
+		
+		do @totalResult("Point")
+	end block
+	
+	
+	block Point
+		do @testClear()
+		
+		var rect1: \dress\geom@Rectangle :: \dress\geom@makeRectangle(0.0, 0.0, 2.0, 2.0)
+		
+		do @assertTrue(lib@same(rect1.x(), 0.0), "geom@Rectangle.x")
+		do @assertTrue(lib@same(rect1.y(), 0.0), "geom@Rectangle.y")
+		do @assertTrue(lib@same(rect1.width(), 2.0), "geom@Rectangle.width")
+		do @assertTrue(lib@same(rect1.height(), 2.0), "geom@Rectangle.height")
+		
+		do rect1.clear().setX(1.0).setY(2.0).setWidth(3.0).setHeight(4.0)
+		do @assertTrue(lib@same(rect1.x(), 1.0), "geom@Rectangle.setX")
+		do @assertTrue(lib@same(rect1.y(), 2.0), "geom@Rectangle.setY")
+		do @assertTrue(lib@same(rect1.width(), 3.0), "geom@Rectangle.setWidth _1")
+		do @assertTrue(lib@same(rect1.height(), 4.0), "geom@Rectangle.setHeight _1")
+		
+		do rect1.clear().setWidth(-1.0).setHeight(-1.0)
+		do @assertTrue(lib@same(rect1.width(), 0.0), "geom@Rectangle.setWidth _2")
+		do @assertTrue(lib@same(rect1.height(), 0.0), "geom@Rectangle.setHeight _2")
+		
+		do rect1.clear().setLeft(-1.0)
+		do @assertTrue(lib@same(rect1.x(), -1.0), "geom@Rectangle.left")
+		do @assertTrue(lib@same(rect1.width(), 1.0), "geom@Rectangle.setLeft")
+		
+		do rect1.clear().setRight(1.0)
+		do @assertTrue(lib@same(rect1.x(), 0.0), "geom@Rectangle.right")
+		do @assertTrue(lib@same(rect1.width(), 1.0), "geom@Rectangle.setRight")
+		
+		do rect1.clear().setTop(-1.0)
+		do @assertTrue(lib@same(rect1.y(), -1.0), "geom@Rectangle.top")
+		do @assertTrue(lib@same(rect1.height(), 1.0), "geom@Rectangle.setTop")
+		
+		do rect1.clear().setBottom(1.0)
+		do @assertTrue(lib@same(rect1.y(), 0.0), "geom@Rectangle.bottom")
+		do @assertTrue(lib@same(rect1.height(), 1.0), "geom@Rectangle.setBottom")
+		
+		var point: \dress\geom@Point :: \dress\geom@makePoint(1.0, 2.0)
+		do rect1.clear().setPosition(point).setSize(point)
+		var pos: \dress\geom@Point :: rect1.position()
+		var size: \dress\geom@Point :: rect1.size()
+		do @assertTrue(lib@same(pos.x(), 1.0) & lib@same(pos.y(), 2.0), "geom@Rectangle.position")
+		do @assertTrue(lib@same(size.x(), 1.0) & lib@same(size.y(), 2.0), "geom@Rectangle.size")
+		
+		do point.set(1.0, 2.0)
+		do rect1.set(1.0, 2.0, 3.0, 4.0).offset(1.0, 2.0)
+		do @assertTrue(lib@same(rect1.x(), 2.0), "geom@Rectangle.offset _1")
+		do @assertTrue(lib@same(rect1.y(), 4.0), "geom@Rectangle.offset _2")
+		do rect1.offsetPoint(point)
+		do @assertTrue(lib@same(rect1.x(), 3.0), "geom@Rectangle.offsetPoint _1")
+		do @assertTrue(lib@same(rect1.y(), 6.0), "geom@Rectangle.offsetPoint _2")
+		
+		do point.set(1.0, 2.0)
+		do rect1.set(1.0, 2.0, 3.0, 4.0).inflate(1.0, 2.0)
+		do @assertTrue(lib@same(rect1.x(), 0.0), "geom@Rectangle.inflate _1")
+		do @assertTrue(lib@same(rect1.y(), 0.0), "geom@Rectangle.inflate _2")
+		do @assertTrue(lib@same(rect1.width(), 5.0), "geom@Rectangle.inflate _3")
+		do @assertTrue(lib@same(rect1.height(), 8.0), "geom@Rectangle.inflate _4")
+		do rect1.set(1.0, 2.0, 3.0, 4.0).inflatePoint(point)
+		do @assertTrue(lib@same(rect1.x(), 0.0), "geom@Rectangle.inflatePoint _1")
+		do @assertTrue(lib@same(rect1.y(), 0.0), "geom@Rectangle.inflatePoint _2")
+		do @assertTrue(lib@same(rect1.width(), 5.0), "geom@Rectangle.inflatePoint _3")
+		do @assertTrue(lib@same(rect1.height(), 8.0), "geom@Rectangle.inflatePoint _4")
+		
+		var rect2: \dress\geom@Rectangle :: \dress\geom@makeRectangle(1.0, 2.0, 3.0, 4.0)
+		do rect1.set(1.0, 2.0, 3.0, 4.0)
+		do @assertTrue(rect1.equals(rect2), "geom@Rectangle.equals _1")
+		do rect1.setX(1.1)
+		do @assertTrue(!rect1.equals(rect2), "geom@Rectangle.equals _2")
+		
+		do rect1.clear()
+		do @assertTrue(rect1.isEmpty(), "geom@Rectangle.isEmpty _1")
+		do rect1.setX(1.0)
+		do @assertTrue(rect1.isEmpty(), "geom@Rectangle.isEmpty _2")
+		do rect1.setWidth(1.0)
+		do @assertTrue(!rect1.isEmpty(), "geom@Rectangle.isEmpty _3")
+		
+		do rect1.set(1.0, 1.0, 3.0, 3.0)
+		do rect2.set(2.0, 2.0, 1.0, 1.0)
+		do point.set(2.0, 2.0)
+		do @assertTrue(rect1.isContainsXY(2.0, 2.0), "geom@Rectangle.isContainXY _1")
+		do @assertTrue(!rect1.isContainsXY(5.0, 2.0), "geom@Rectangle.isContainXY _2")
+		do @assertTrue(rect1.isContainsPoint(point), "geom@Rectangle.isContainsPoint _1")
+		do point.setY(5.0)
+		do @assertTrue(!rect1.isContainsPoint(point), "geom@Rectangle.isContainsPoint _2")
+		do @assertTrue(rect1.isContainsRect(rect2), "geom@Rectangle.isContainsRect _1")
+		do rect2.setWidth(2.1)
+		do @assertTrue(!rect1.isContainsRect(rect2), "geom@Rectangle.isContainsRect _2")
+		do rect2.set(3.0, 3.0, 3.0, 3.0)
+		do @assertTrue(rect1.isIntersectsRect(rect2), "geom@Rectangle.isIntersectsRect _1")
+		do rect2.setX(4.0)
+		do @assertTrue(!rect1.isIntersectsRect(rect2), "geom@Rectangle.isIntersectsRect _2")
+		
+		do rect1.clear()
+		do rect2.clear().setX(1.0).setY(1.0)
+		var rectAry: []\dress\geom@Rectangle :: [rect2, rect1]
+		do rectAry.sort()
+		do @assertTrue(rectAry[0] =& rect1, "geom@Rectangle.cmp _1")
+		do rect2.setX(-1.0)
+		do rectAry.sort()
+		do @assertTrue(rectAry[0] =& rect2, "geom@Rectangle.cmp _2")
+		do rect2.setX(0.0)
+		do rectAry.sort()
+		do @assertTrue(rectAry[0] =& rect1, "geom@Rectangle.cmp _3")
+		do rect2.setY(-1.0)
+		do rectAry.sort()
+		do @assertTrue(rectAry[0] =& rect2, "geom@Rectangle.cmp _4")
+		do rect2.setY(0.0)
+		do rectAry.sort()
+		do @assertTrue(rectAry[0] =& rect2, "geom@Rectangle.cmp _5")
+		
+		do @totalResult("Rectangle")
+	end block
+end func
+
+
+var testCnt: int
+var errCnt: int
+
+func testClear()
+	do @testCnt :: 0
+	do @errCnt :: 0
+end func
+
+
+func assertTrue(result: bool, message: []char)
+	do @testCnt :+ 1
+	if(!result)
+		do @errCnt :+ 1
+		do cui@print("[Assert Failed] \{message}\n")
+	end if
+end func
+
+
+func totalResult(target: []char)
+	if(@errCnt = 0)
+		do cui@print("Succeeded!(\{@testCnt} tests)(class: \{target})\n\n")
+	end if
+end func
