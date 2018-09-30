@@ -1,0 +1,170 @@
+; module Data table Test (C)satochi@http://hime.be/
+
+{
+	モジュールを以下のように配置してテスト実施
+	./dress/table.kn
+}
+
+func main()
+	do \dress\table@init()
+	
+	block DataTable
+		do @testClear()
+		var tryResult: bool :: false
+		
+		; create, table
+		var table1: \dress\table@Table :: \dress\table@create("test")
+		var table2: \dress\table@Table :: \dress\table@table("test")
+		do @assertTrue(table1 =& table2, "table@create & table")
+		
+		; exist
+		do @assertTrue(\dress\table@exist("test"), "table@exist _1")
+		do @assertTrue(!\dress\table@exist("ttt"), "table@exist _2")
+		
+		; delete
+		do \dress\table@delete("test")
+		do @assertTrue(!\dress\table@exist("test"), "table@delete")
+		
+		; serialize, deserialize
+		do table1 :: \dress\table@create("test")
+		do table1.setStr("a", "tableモジュール")
+		var serialized: []bit8 :: \dress\table@serialize("test")
+		do table2 :: \dress\table@deserialize("test2", serialized)
+		do @assertTrue(table2.str("a") = "tableモジュール", "table@serialize & deserialize")
+		
+		; validKey
+		do tryResult :: false
+		try
+			do \dress\table@exist(null)
+		catch \dress\table@ERR_INVALID_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@validateKey _1")
+		
+		do tryResult :: false
+		try
+			do \dress\table@exist("")
+		catch \dress\table@ERR_INVALID_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@validateKey _2")
+		
+		; table(err route)
+		do tryResult :: false
+		try
+			do \dress\table@table("a")
+		catch \dress\table@ERR_TABLE_UNLOADED
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@table")
+		
+		do @totalResult("module Data table")
+	end block
+	
+	
+	block Table
+		do @testClear()
+		
+		var table: \dress\table@Table :: \dress\table@table("test")
+		var tryResult: bool :: false
+		
+		; sw
+		do tryResult :: false
+		try
+			do table.setSw("t", false)
+			do @assertTrue(!table.sw("t"), "table@Table.sw _1")
+			do table.setSw("t", true)
+			do @assertTrue(table.sw("t"), "table@Table.sw _2")
+			do table.sw("tt")
+		catch \dress\table@ERR_NON_EXIST_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@Table.sw _3")
+		
+		; str
+		do tryResult :: false
+		try
+			do table.setStr("r", "a")
+			do @assertTrue(table.str("r") = "a", "table@Table.str _1")
+			do table.str("tt")
+		catch \dress\table@ERR_NON_EXIST_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@Table.str _2")
+		
+		; str
+		do tryResult :: false
+		try
+			do table.setNum("e", 1)
+			do @assertTrue(table.num("e") = 1, "table@Table.num _1")
+			do table.num("tt")
+		catch \dress\table@ERR_NON_EXIST_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@Table.num _2")
+		
+		; str
+		do tryResult :: false
+		try
+			do table.setFl("w", 1.1)
+			do @assertTrue(table.fl("w") = 1.1, "table@Table.fl _1")
+			do table.fl("tt")
+		catch \dress\table@ERR_NON_EXIST_KEY
+			do tryResult :: true
+		end try
+		do @assertTrue(tryResult, "table@Table.fl _2")
+		
+		; has
+		do @assertTrue(table.hasSwKey("t"), "table@Table.hasSwKey _1")
+		do @assertTrue(!table.hasSwKey("g"), "table@Table.hasSwKey _2")
+		do @assertTrue(table.hasStrKey("r"), "table@Table.hasStrKey _1")
+		do @assertTrue(!table.hasStrKey("g"), "table@Table.hasStrKey _2")
+		do @assertTrue(table.hasNumKey("e"), "table@Table.hasNumKey _1")
+		do @assertTrue(!table.hasNumKey("g"), "table@Table.hasNumKey _2")
+		do @assertTrue(table.hasFlKey("w"), "table@Table.hasFlKey _1")
+		do @assertTrue(!table.hasFlKey("g"), "table@Table.hasFlKey _2")
+		
+		; clear
+		do table.clear()
+		do @assertTrue(!table.hasSwKey("t"), "table@Table.clear _1")
+		do @assertTrue(!table.hasStrKey("r"), "table@Table.clear _2")
+		do @assertTrue(!table.hasNumKey("e"), "table@Table.clear _3")
+		do @assertTrue(!table.hasFlKey("w"), "table@Table.clear _4")
+		
+		do @totalResult("Table")
+	end block
+end func
+
+
+func key(): []bit8
+	ret[
+	|128b8, 222b8, 111b8, 145b8, 134b8, 086b8, 033b8, 098b8,
+	|198b8, 233b8, 156b8, 249b8, 193b8, 018b8, 143b8, 125b8,
+	|176b8, 043b8, 219b8, 166b8, 204b8, 121b8, 179b8, 108b8,
+	|089b8, 173b8, 247b8, 036b8, 158b8, 147b8, 063b8, 224b8]
+end func
+
+
+var testCnt: int
+var errCnt: int
+
+func testClear()
+	do @testCnt :: 0
+	do @errCnt :: 0
+end func
+
+
+func assertTrue(result: bool, message: []char)
+	do @testCnt :+ 1
+	if(!result)
+		do @errCnt :+ 1
+		do cui@print("[Assert Failed] \{message}\n")
+	end if
+end func
+
+
+func totalResult(target: []char)
+	if(@errCnt = 0)
+		do cui@print("Succeeded!(\{@testCnt} tests)(class: \{target})\n\n")
+	end if
+end func

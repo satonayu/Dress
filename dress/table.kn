@@ -1,0 +1,192 @@
+{############################################################################
+    Dress up the Kuin --- module Data table
+      Created by satonayu(http://hime.be/, https://twitter.com/satonayu)
+        License: くいなちゃんライセンス( http://kuina.ch/others/license )
+############################################################################}
+; +property [read-only]
++func table(key: []char): @Table
+	do @validateKey(key)
+	if(!@exist(key))
+		throw @ERR_TABLE_UNLOADED
+	end if
+	ret @tables.get(key)
+end func
+
+
++func init()
+	do @tables :: #dict<[]char, @Table>
+end func
+
+
++func exist(key: []char): bool
+	do @validateKey(key)
+	ret @tables.get(key) <>& null
+end func
+
+
++func create(key: []char): @Table
+	do @validateKey(key)
+	var table: @Table :: #@Table
+	do @tables.add(key, table)
+	ret table
+end func
+
+
++func delete(key: []char)
+	do @validateKey(key)
+	if(@exist(key))
+		do @tables.add(key, null)
+	end if
+end func
+
+
++func serialize(key: []char): []bit8
+	do @validateKey(key)
+	if(!@exist(key))
+		throw @ERR_TABLE_UNLOADED
+	end if
+	ret @table(key) $> []bit8
+end func
+
+
++func deserialize(key: []char, data: []bit8): @Table
+	do @validateKey(key)
+	var table: @Table :: data $< @Table
+	do @tables.add(key, table)
+	ret table
+end func
+
+
+func validateKey(key: []char)
+	if(key =& null | key = "")
+		throw @ERR_INVALID_KEY
+	end if
+end func
+
+
+; exception constant
++const ERR_NON_EXIST_KEY: int :: 0x00003100
++const ERR_INVALID_KEY: int :: 0x00003101
++const ERR_TABLE_UNLOADED: int :: 0x00003102
+
+
+var tables: dict<[]char, @Table>
+
+
+
++class Table()
+	var _switch: dict<[]char, bool>
+	var _string: dict<[]char, []char>
+	var _numeric: dict<[]char, int>
+	var _float: dict<[]char, float>
+	
+	
+	*func ctor()
+		do me.clear()
+	end func
+	
+	
+	; +property
+	+func sw(key: []char): bool
+		if(!me.hasSwKey(key))
+			if(dbg)
+				throw @ERR_NON_EXIST_KEY
+			end if
+			ret false
+		end if
+		
+		ret me._switch.get(key)
+	end func
+	+func setSw(key: []char, value: bool)
+		do @validateKey(key)
+		do me._switch.add(key, value)
+	end func
+	
+	
+	; +property
+	+func str(key: []char): []char
+		if(!me.hasStrKey(key))
+			if(dbg)
+				throw @ERR_NON_EXIST_KEY
+			end if
+			ret ""
+		end if
+		
+		ret me._string.get(key)
+	end func
+	+func setStr(key: []char, value: []char)
+		do @validateKey(key)
+		do me._string.add(key, value)
+	end func
+	
+	
+	; +property
+	+func num(key: []char): int
+		if(!me.hasNumKey(key))
+			if(dbg)
+				throw @ERR_NON_EXIST_KEY
+			end if
+			ret 0
+		end if
+		
+		ret me._numeric.get(key)
+	end func
+	+func setNum(key: []char, value: int)
+		do @validateKey(key)
+		do me._numeric.add(key, value)
+	end func
+	
+	
+	; +property
+	+func fl(key: []char): float
+		if(!me.hasFlKey(key))
+			if(dbg)
+				throw @ERR_NON_EXIST_KEY
+			end if
+			ret 0.0
+		end if
+		
+		ret me._float.get(key)
+	end func
+	+func setFl(key: []char, value: float)
+		do @validateKey(key)
+		do me._float.add(key, value)
+	end func
+	
+	
+	+func clear()
+		do me._switch :: #dict<[]char, bool>
+		do me._string :: #dict<[]char, []char>
+		do me._numeric :: #dict<[]char, int>
+		do me._float :: #dict<[]char, float>
+		
+		do me._switch.add("__init__", true)
+		do me._string.add("__init__", "initialized")
+		do me._numeric.add("__init__", 0)
+		do me._float.add("__init__", 0.0)
+	end func
+	
+	
+	+func hasSwKey(key: []char): bool
+		do @validateKey(key)
+		ret me._switch.exist(key)
+	end func
+	
+	
+	+func hasStrKey(key: []char): bool
+		do @validateKey(key)
+		ret me._string.exist(key)
+	end func
+	
+	
+	+func hasNumKey(key: []char): bool
+		do @validateKey(key)
+		ret me._numeric.exist(key)
+	end func
+	
+	
+	+func hasFlKey(key: []char): bool
+		do @validateKey(key)
+		ret me._float.exist(key)
+	end func
+end class
